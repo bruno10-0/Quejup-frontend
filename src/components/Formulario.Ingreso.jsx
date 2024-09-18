@@ -27,13 +27,15 @@ export default function Form() {
     }),
     onSubmit: async (data) => {
       setIsLoading(true);
+      console.log(isLoading);
       try {
-        singIn(data);
-        setIsLoading(false);
+        await singIn(data);
       } catch (error) {
         console.log(error);
+      } finally {
         setIsLoading(false);
       }
+      console.log(isLoading);
     },
   });
   useEffect(() => {
