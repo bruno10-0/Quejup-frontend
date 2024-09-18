@@ -1,5 +1,6 @@
 import Registrar from '../components/Fromulario.Registro'
 import { NavBar2 } from "../components/navBAR2"
+import img from "../assets/img.jpg"
 export default function Register() {
     return (
         <>
@@ -13,7 +14,7 @@ export default function Register() {
                     </div>
                     <div className="hidden lg:flex h-full w-2/4 items-center justify-center">
                         <img
-                            src="https://misiones.tur.ar/wp-content/uploads/2023/08/posadas--1024x576.jpg"
+                            src={img}
                             alt="Mi imagen"
                             style={{ width: '100%', height: 'calc(100vh + 320px)' }}
                         />

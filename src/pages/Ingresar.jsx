@@ -1,5 +1,7 @@
 import Ingresar from "../components/Formulario.Ingreso";
 import { NavBar2 } from "../components/navBAR2";
+import img from "../assets/img.jpg"
+
 export default function Login_Logo() {
   return (
     <>
@@ -13,7 +15,7 @@ export default function Login_Logo() {
           </div>
           <div className="hidden lg:flex h-full w-2/4 items-center justify-center">
             <img
-              src="https://radiotupambae.com.ar/wp-content/uploads/2023/07/turismo-posadas-2-1.jpeg"
+              src={img}
               alt="imagen"
               style={{ width: "100%", height: "calc(86vh + 30px)" }}
             />
