@@ -13,7 +13,7 @@ export default function Register() {
                     </div>
                     <div className="hidden lg:flex h-full w-2/4 items-center justify-center">
                         <img
-                            src="https://hablemosdeargentina.com/wp-content/uploads/2018/04/Posadas-Misiones-15.jpg"
+                            src="https://misiones.tur.ar/wp-content/uploads/2023/08/posadas--1024x576.jpg"
                             alt="Mi imagen"
                             style={{ width: '100%', height: 'calc(100vh + 320px)' }}
                         />
