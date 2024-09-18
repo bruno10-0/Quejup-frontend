@@ -1,100 +1,113 @@
-import { Link,useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useAuth } from "../context/authContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Cargando } from "./Cargando";
 
 export default function Form() {
-    const navigate=useNavigate()
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const { singIn, errors: singInErrors, isAuthenticated } = useAuth();
 
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("Debe ingresar un correo electrónico válido")
+        .required("Debe ingresar su correo")
+        .matches(
+          /^(?=.*[a-zA-Z0-9._%+-]+@(gmail|hotmail|outlook|icloud)\.(com|es|co|uk|...))/,
+          "Ingrese una dirección de correo electrónico válido (gmail, hotmail, outlook, icloud)"
+        ),
+      password: Yup.string().required("Debe ingresar su contraseña"),
+    }),
+    onSubmit: async (data) => {
+      setIsLoading(true);
+      try {
+        singIn(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
+      }
+    },
+  });
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      return navigate("/inicio");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
-    const { singIn, errors: singInErrors,isAuthenticated} = useAuth();
-    
-   
-    const formik = useFormik({
-        initialValues: {
-            email: "",
-            password: ""
-        },
-        validationSchema: Yup.object({
-            email: Yup.string()
-                .email("Debe ingresar un correo electrónico válido")
-                .required("Debe ingresar su correo")
-                .matches(
-                    /^(?=.*[a-zA-Z0-9._%+-]+@(gmail|hotmail|outlook|icloud)\.(com|es|co|uk|...))/,
-                    "Ingrese una dirección de correo electrónico válido (gmail, hotmail, outlook, icloud)"
-                ),
-            password: Yup.string()
-                .required("Debe ingresar su contraseña")
-        }),
-        onSubmit: async (data) => {
-            try {
-                singIn(data);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    });
-    useEffect(() => {
-        if (isAuthenticated) {
-          return navigate("/inicio")
-        }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      },[isAuthenticated])
+  return (
+    <form onSubmit={formik.handleSubmit} className="px-20 rounded-3xl">
+      {isLoading && <Cargando />}
+      <div className="mt-3 w-full h-auto rounded-full " />
+      <h1 className="font-bold text-center text-5xl text-orange-400">
+        Iniciar sesión
+      </h1>
+      <h2 className="font-medium text-lg text-gray-500 mt-5 text-center">
+        A continuación, ingrese sus datos:
+      </h2>
+      <div className="mt-8">
+        <div>
+          <label className="text-lg font-medium">Email</label>
+          <input
+            className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+            placeholder="Por favor, ingrese su email."
+            name="email"
+            onChange={formik.handleChange}
+            value={formik.values.name}
+          />
 
-    return (
-        <form onSubmit={formik.handleSubmit} className="px-20 rounded-3xl">
-            <div className="mt-3 w-full h-auto rounded-full " />
-            <h1 className="font-bold text-center text-5xl text-orange-400">Iniciar sesión</h1> 
-            <h2 className="font-medium text-lg text-gray-500 mt-5 text-center">A continuación, ingrese sus datos:</h2>
-            <div className="mt-8">
+          {formik.touched.email && formik.errors.email ? (
+            <div className="text-red-600 mt-2">{formik.errors.email}</div>
+          ) : null}
+        </div>
 
-                <div>
-                    <label className="text-lg font-medium">Email</label>
-                    <input
-                        className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                        placeholder="Por favor, ingrese su email."
-                        name="email"
-                        onChange={formik.handleChange}
-                        value={formik.values.name}
-                    />
+        <div>
+          <label className="text-lg font-medium">Contraseña</label>
+          <input
+            type="password"
+            className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+            placeholder="Por favor, ingrese su contraseña."
+            name="password"
+            onChange={formik.handleChange}
+            value={formik.values.password}
+          />
 
-                    {formik.touched.email && formik.errors.email ? (
-                        <div className="text-red-600 mt-2">{formik.errors.email}</div>
-                    ) : null}
+          {formik.touched.password && formik.errors.password ? (
+            <div className="text-red-600 mt-2">{formik.errors.password}</div>
+          ) : null}
+        </div>
 
-                </div>
-
-                <div>
-                    <label className="text-lg font-medium">Contraseña</label>
-                    <input
-                        type="password"
-                        className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                        placeholder="Por favor, ingrese su contraseña."
-                        name="password"
-                        onChange={formik.handleChange}
-                        value={formik.values.password}
-                    />
-
-                    {formik.touched.password && formik.errors.password ? (
-                        <div className="text-red-600 mt-2">{formik.errors.password}</div>
-                    ) : null}
-                </div>
-
-                <div className="mt-8 flex justify-between items-center">
-                    {/* <div>
+        <div className="mt-8 flex justify-between items-center">
+          {/* <div>
                         <input
                             type="checkbox"
                             id="recordar"
                         />
                         <label className="ml-2 font-medium text-base" htmlFor="recordar">Recordarme</label>
                     </div> */}
-                    <button className="font-medium text-base text-blue-400  hover:text-blue-600">Olvidé mi contraseña</button>
-                </div>
-                {singInErrors && <div className="text-red-600 mt-5">{singInErrors}</div>}
-                <div className="flex flex-col gap-y-4 mt-5">
-                    <button className="active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all  py-3 rounded-xl  bg-blue-500 text-white text-lg font-bold  hover:bg-blue-600" type="submit">Ingresar</button>
-                    {/* <button
+          <button className="font-medium text-base text-blue-400  hover:text-blue-600">
+            Olvidé mi contraseña
+          </button>
+        </div>
+        {singInErrors && (
+          <div className="text-red-600 mt-5">{singInErrors}</div>
+        )}
+        <div className="flex flex-col gap-y-4 mt-5">
+          <button
+            className="active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all  py-3 rounded-xl  bg-blue-500 text-white text-lg font-bold  hover:bg-blue-600"
+            type="submit"
+          >
+            Ingresar
+          </button>
+          {/* <button
                         className='flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4  rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100  ' type="button">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M5.26644 9.76453C6.19903 6.93863 8.85469 4.90909 12.0002 4.90909C13.6912 4.90909 15.2184 5.50909 16.4184 6.49091L19.9093 3C17.7821 1.14545 15.0548 0 12.0002 0C7.27031 0 3.19799 2.6983 1.24023 6.65002L5.26644 9.76453Z" fill="#EA4335" />
@@ -104,12 +117,17 @@ export default function Form() {
                         </svg>
                         Ingresar con Google
                     </button> */}
-                </div>
-                <div className="mt-8 flex justify-center items-center">
-                    <p className="font-medium text-base">¿No tienes cuenta?</p>
-                    <Link to={'/registrar'} className="text-blue-400 text-base font-medium ml-2 hover:text-blue-600">Registrarme</Link>
-                </div>
-            </div>
-        </form>
-    )
+        </div>
+        <div className="mt-8 flex justify-center items-center">
+          <p className="font-medium text-base">¿No tienes cuenta?</p>
+          <Link
+            to={"/registrar"}
+            className="text-blue-400 text-base font-medium ml-2 hover:text-blue-600"
+          >
+            Registrarme
+          </Link>
+        </div>
+      </div>
+    </form>
+  );
 }
